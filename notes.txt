@@ -1,0 +1,2 @@
+components/packages used rn for requirements.txt:
+

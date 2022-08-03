@@ -5,6 +5,8 @@ import glob
 from subprocess import call
 from turtle import xcor
 
+searchTerm = ".png"
+
 download_dir = 'C:/Users/calvi/Downloads'
 target_dir = ""
 
@@ -24,20 +26,27 @@ def dirFiles(path):   #check if can use blob instead
     ]
     return dir_contents
 
+
+#note: this is currently case sensitive!
 def calFind(dirList,searchStr):
     resultIndex = []
     resultStr = []
 
     for x in dirList:
         index = dirList.index(x) #get curr file index
-        print(index)
-        #options: use filter, list compression or idk wtf is a lambda
-        if list(filter(lambda x: x.startswith(searchStr),dirList)):
+        #print(x)
+        if(searchStr in x):
+            #print(x)
+            resultStr.append(x)
             resultIndex.append(index)
-            resultStr.append(dirList[x])
 
-    print(resultIndex)
     print(resultStr)
+    print(resultIndex)
+    #resultStr = list(filter(lambda x: searchStr in x, dirList))
+    #resultStr = [v for v in dirList if searchStr in v]
+
+    #print(resultIndex)
+    #print(resultStr)
 
     return 
 
@@ -45,10 +54,12 @@ def calFind(dirList,searchStr):
 def main():
     fish = dirFiles(download_dir)
     #print(fish)
-    print("aids")
+
+    calFind(fish, searchTerm)
 
     try:
-        calFind(fish, "to")
+        #calFind(fish, 'Tolulu')
+        print('doneish')
     except:
         print("pok gai")
     #pog

@@ -7,10 +7,10 @@ import shutil
 
 delete_files_after_move = False
 
-searchTerm = "ec90"
+searchTerm = "cf10"
 numFilesForCal = 5
-fileCriteria = '34#a'   ##something to qualify it as target filetype for recording
-download_dir = 'C:/Users/calvi/Downloads/'
+fileCriteria = '.pb.bin'   ##something to qualify it as target filetype for recording (eg. .pb.bin)
+download_dir = 'C:/Users/calvi/Downloads/_edge'
 target_dir = 'C:/projects/bababoo'
 
 opMode = {
@@ -62,17 +62,52 @@ def makeDir(matchList):
     serialNum = matchList[0][:12]
     #print(serialNum)
     #find(serialNum, target_dir)
-    for root, dirs, files in os.walk(target_dir): ####WGAT IS HPAPENIGN
+    tmpDir = target_dir 
+    searchDir = serialNum + '_' #for scanning for subfolder with underscore runnum
+    
+    flag = 0
+
+    print(serialNum)
+    for root,dirs,files in os.walk(target_dir): ####WGAT IS HPAPENIGN ok so currently this loops and checks through every folder so the make dir thing needs to be after this check
         if (serialNum) in dirs:
             print("folder already exists")
-        else:
-            print("folder doesn't exist")
+            #tmpDir = tmpDir + '/' + serialNum
+            flag = flag + 1
+            print(dirs)
+    #if no root serial folder make that otherwise just set dir location for next step in finding subfolder 
+    if(flag > 0):
+        print("folder exists")
+        tmpDir = tmpDir + '/' + serialNum
+    else:
+        os.mkdir(target_dir + '/' + serialNum)
+        tmpDir = tmpDir + '/' + serialNum
+
+        #vs 
+
+    rootDirs = os.listdir(tmpDir)
+    print(rootDirs)
+    if (len(rootDirs == 0)):
+
+        print("aids")
+    if (len(rootDirs) > 0):
+        print('go to subfolder and find last one')
+        runNum = rootDirs[len(rootDirs) - 1][13]
+        print(runNum)
+
+    #if rootDirs[len(rootDirs)] 
+
     
+    #a = os.listdir(tmpDir)
+    
+    #print(a)
 
     return
 
-
-
+# else:
+#            if(flag == 0):
+#               
+#                flag = 1
+#
 def main():
     fish = dirFiles(download_dir)
     #print(fish)

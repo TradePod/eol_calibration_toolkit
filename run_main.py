@@ -11,7 +11,7 @@ searchTerm = "cf10"
 numFilesForCal = 5
 fileCriteria = '.pb.bin'   ##something to qualify it as target filetype for recording (eg. .pb.bin)
 download_dir = 'C:/Users/calvi/Downloads/_edge'
-target_dir = 'C:/projects/bababoo'
+target_dir = 'C:/projects/bababoo/'
 
 opMode = {
     1: "move 5 cal things 2 dir in config",
@@ -65,49 +65,37 @@ def makeDir(matchList):
     tmpDir = target_dir 
     searchDir = serialNum + '_' #for scanning for subfolder with underscore runnum
     
-    flag = 0
+    #flag = 0
 
     print(serialNum)
-    for root,dirs,files in os.walk(target_dir): ####WGAT IS HPAPENIGN ok so currently this loops and checks through every folder so the make dir thing needs to be after this check
-        if (serialNum) in dirs:
-            print("folder already exists")
-            #tmpDir = tmpDir + '/' + serialNum
-            flag = flag + 1
-            print(dirs)
-    #if no root serial folder make that otherwise just set dir location for next step in finding subfolder 
-    if(flag > 0):
-        print("folder exists")
-        tmpDir = tmpDir + '/' + serialNum
+    print(os.listdir(target_dir))
+    if(serialNum in os.listdir(target_dir)):
+        print('folder exists')
     else:
-        os.mkdir(target_dir + '/' + serialNum)
-        tmpDir = tmpDir + '/' + serialNum
+        print('folder doesnt exist, creating first')
+        os.mkdir(target_dir + serialNum)
+    tmpDir = tmpDir + serialNum + '/'
+    
+    subDirs = os.listdir(tmpDir)
+    print(subDirs)
 
-        #vs 
+    ###futurefeature: check if any/prev subfolder is empty in case accidental creatin of too many folders with nothing in it
 
-    rootDirs = os.listdir(tmpDir)
-    print(rootDirs)
-    if (len(rootDirs == 0)):
 
-        print("aids")
-    if (len(rootDirs) > 0):
+    if (len(subDirs) == 0):
+        #no subfolder yet
+        os.mkdir(tmpDir + serialNum + '_1') 
+    if (len(subDirs) > 0):
         print('go to subfolder and find last one')
-        runNum = rootDirs[len(rootDirs) - 1][13]
+        runNum = subDirs[len(subDirs) - 1][13]  #next folder underscore number
+        #runNum = int(runNum) + 1  ###UNCOMMENT BEFORE DPELOY
         print(runNum)
+        #os.mkdir(tmpDir + serialNum + '_' + str(runNum ))  ###UNCOMMENT BEFORE DEPLOY
 
-    #if rootDirs[len(rootDirs)] 
+    targetSubfolder = tmpDir + serialNum + '_' + str(runNum)
 
-    
-    #a = os.listdir(tmpDir)
-    
-    #print(a)
+    return targetSubfolder
 
-    return
-
-# else:
-#            if(flag == 0):
-#               
-#                flag = 1
-#
 def main():
     fish = dirFiles(download_dir)
     #print(fish)
@@ -119,12 +107,20 @@ def main():
     #dirlist = [ item for item in os.listdir('C:/projects/Casana/test_calibrationdir/') if os.path.isdir(os.path.join('C:/projects/Casana/test_calibrationdir/', item)) ]
     #check if files from seat
     if(len(matchList) == numFilesForCal):
-        makeDir(matchList)
+        dirTarget = makeDir(matchList)
         for a in matchIndex:
-            #print(a)
+            
             #target_dir = target_dir + '/'
-            #print(matchList[a])
+            print(matchList[a])
             #print(matchList[a][:29])
+
+            try:
+                print('moving file:' + a)
+                print(download_dir + a)
+                shutil.copy(download_dir + a, dirTarget)
+
+            except:
+                print('file already exists')
 
             #shutil.copy(download_dir + a, target_dir)
             #os.mkdir(target_dir + '/aids')

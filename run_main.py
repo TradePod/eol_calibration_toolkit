@@ -91,7 +91,11 @@ def makeDir(matchList):
             print(entry.name)
             subCount = subCount + 1
 
+<<<<<<< HEAD
     #print(subCount)
+=======
+    print(subCount)
+>>>>>>> 2b32b7da1758e4316ffbd1a6f2d34d32b761eafc
 
     newDir = tmpDir + serialNum + '_' + str(subCount)
     os.mkdir(newDir)

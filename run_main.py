@@ -2,7 +2,6 @@ from genericpath import isfile
 #from nis import match
 from ntpath import join
 import os
-from re import M
 import shutil
 
 
@@ -14,7 +13,7 @@ fileCriteria = '.pb.bin'   ##something to qualify it as target filetype for reco
 download_dir = 'C:/Users/calvi/Downloads/_edge/'
 target_dir = 'C:/projects/bababoo/'
 
-opMode = {
+opMode = {  ###unused currently
     1: "move 5 cal things 2 dir in config",
     2: "idk"
 }
@@ -42,14 +41,14 @@ def dirFiles(path):   #check if can use blob instead
 
 
 #note: this is currently case sensitive
-def calFind(dirList,searchStr):
+def calFind(dirList,searchStr,fileCriteria):
     #resultIndex = []
     resultStr = []
 
     for x in dirList:
         index = dirList.index(x) #get curr file index
         #print(x)
-        if(searchStr in x):
+        if((searchStr in x) and (fileCriteria in x)):
             #print(x)
             resultStr.append(x)
             #resultIndex.append(index)
@@ -72,35 +71,53 @@ def makeDir(matchList):
     else:
         print('folder doesnt exist, creating first')
         os.mkdir(target_dir + serialNum)
+
     tmpDir = tmpDir + serialNum + '/'
     
+
+
+    ##better subfolder number discovery system 
     subDirs = os.listdir(tmpDir)
     print(subDirs)
+    if any(os.scandir(tmpDir)):
+        print('noempty')
+
+
+    subCount = 1 #default underscore start at _1
+    for entry in os.scandir(tmpDir):
+        if entry.is_dir():
+            #print(entry)
+            print(entry.name)
+            subCount = subCount + 1
+
+    print(subCount)
+
+    newDir = tmpDir + serialNum + '_' + str(subCount)
+    os.mkdir(newDir)
 
     ###futurefeature: check if any/prev subfolder is empty in case accidental creatin of too many folders with nothing in it
+    # if (len(subDirs) == 0):
+    #     #no subfolder yet
+    #     os.mkdir(tmpDir + serialNum + '_1') 
+    #     runNum = 1
+    # if (len(subDirs) > 0):
+    #     print('go to subfolder and find last one')
+    #     runNum = subDirs[len(subDirs) - 1][13]  #next folder underscore number ###THIS IMPLENTATION DOESN'T SUPPORT DOUBLE DIGIT NUMBERS
+    #     runNum = int(runNum) + 1  ###UNCOMMENT BEFORE DPELOY
+    #     print(runNum)
+    #     os.mkdir(tmpDir + serialNum + '_' + str(runNum ))  ###UNCOMMENT BEFORE DEPLOY
 
 
-    if (len(subDirs) == 0):
-        #no subfolder yet
-        os.mkdir(tmpDir + serialNum + '_1') 
-        runNum = 1
-    if (len(subDirs) > 0):
-        print('go to subfolder and find last one')
-        runNum = subDirs[len(subDirs) - 1][13]  #next folder underscore number ###THIS IMPLENTATION DOESN'T SUPPORT DOUBLE DIGIT NUMBERS
-        runNum = int(runNum) + 1  ###UNCOMMENT BEFORE DPELOY
-        print(runNum)
-        os.mkdir(tmpDir + serialNum + '_' + str(runNum ))  ###UNCOMMENT BEFORE DEPLOY
-
-    targetSubfolder = tmpDir + serialNum + '_' + str(runNum) + '/'
+    targetSubfolder = newDir + '/'
 
     return targetSubfolder
 
 def main():
+
     fish = dirFiles(download_dir)
-    #print(fish)
-    #probs dont need match index
+
     try:
-        matchList = calFind(fish, searchTerm)
+        matchList = calFind(fish, searchTerm, fileCriteria)
         print(matchList)
     except:
         print("Couldn't find all files")

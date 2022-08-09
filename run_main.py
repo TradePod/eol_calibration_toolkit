@@ -8,7 +8,7 @@ delete_files_after_move = False
 searchTerm = "ec90"
 numFilesForCal = 5
 fileCriteria = '.pb.bin'   ##something to qualify it as target filetype for recording (eg. .pb.bin)
-download_dir = 'C:/Users/calvi/Downloads/_edge/'
+download_dir = 'C:/projects/_edge_dl/'
 #target_dir = 'G:/Shared drives/Supply Chain and Manufacturing/seat_calibration/seat_calibration_v8/'
 target_dir = 'C:/projects/bababoo/'
 

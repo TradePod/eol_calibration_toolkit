@@ -1,4 +1,5 @@
 from genericpath import isfile
+#from nis import match
 from ntpath import join
 import os
 from re import M
@@ -7,10 +8,10 @@ import shutil
 
 delete_files_after_move = False
 
-searchTerm = "cf10"
+searchTerm = "ec90"
 numFilesForCal = 5
 fileCriteria = '.pb.bin'   ##something to qualify it as target filetype for recording (eg. .pb.bin)
-download_dir = 'C:/Users/calvi/Downloads/_edge'
+download_dir = 'C:/Users/calvi/Downloads/_edge/'
 target_dir = 'C:/projects/bababoo/'
 
 opMode = {
@@ -42,7 +43,7 @@ def dirFiles(path):   #check if can use blob instead
 
 #note: this is currently case sensitive
 def calFind(dirList,searchStr):
-    resultIndex = []
+    #resultIndex = []
     resultStr = []
 
     for x in dirList:
@@ -51,12 +52,9 @@ def calFind(dirList,searchStr):
         if(searchStr in x):
             #print(x)
             resultStr.append(x)
-            resultIndex.append(index)
+            #resultIndex.append(index)
 
-    print(resultStr)
-    print(resultIndex)
-
-    return resultStr, resultIndex
+    return resultStr #resultIndex
 
 def makeDir(matchList):
     serialNum = matchList[0][:12]
@@ -85,14 +83,15 @@ def makeDir(matchList):
     if (len(subDirs) == 0):
         #no subfolder yet
         os.mkdir(tmpDir + serialNum + '_1') 
+        runNum = 1
     if (len(subDirs) > 0):
         print('go to subfolder and find last one')
-        runNum = subDirs[len(subDirs) - 1][13]  #next folder underscore number
-        #runNum = int(runNum) + 1  ###UNCOMMENT BEFORE DPELOY
+        runNum = subDirs[len(subDirs) - 1][13]  #next folder underscore number ###THIS IMPLENTATION DOESN'T SUPPORT DOUBLE DIGIT NUMBERS
+        runNum = int(runNum) + 1  ###UNCOMMENT BEFORE DPELOY
         print(runNum)
-        #os.mkdir(tmpDir + serialNum + '_' + str(runNum ))  ###UNCOMMENT BEFORE DEPLOY
+        os.mkdir(tmpDir + serialNum + '_' + str(runNum ))  ###UNCOMMENT BEFORE DEPLOY
 
-    targetSubfolder = tmpDir + serialNum + '_' + str(runNum)
+    targetSubfolder = tmpDir + serialNum + '_' + str(runNum) + '/'
 
     return targetSubfolder
 
@@ -101,26 +100,27 @@ def main():
     #print(fish)
     #probs dont need match index
     try:
-        matchList, matchIndex = calFind(fish, searchTerm)
+        matchList = calFind(fish, searchTerm)
+        print(matchList)
     except:
-        print("pok gai")
+        print("Couldn't find all files")
     #dirlist = [ item for item in os.listdir('C:/projects/Casana/test_calibrationdir/') if os.path.isdir(os.path.join('C:/projects/Casana/test_calibrationdir/', item)) ]
     #check if files from seat
+    print(len(matchList))
     if(len(matchList) == numFilesForCal):
         dirTarget = makeDir(matchList)
-        for a in matchIndex:
-            
-            #target_dir = target_dir + '/'
-            print(matchList[a])
-            #print(matchList[a][:29])
+        for a in matchList:     ### why is A length not right
 
             try:
                 print('moving file:' + a)
-                print(download_dir + a)
-                shutil.copy(download_dir + a, dirTarget)
+                #print(download_dir + a)
+                sourceFile = download_dir + a
+                destination = dirTarget + a
+                shutil.copy(sourceFile, destination)
 
-            except:
+            except shutil.SameFileError:
                 print('file already exists')
+            
 
             #shutil.copy(download_dir + a, target_dir)
             #os.mkdir(target_dir + '/aids')
